@@ -1,0 +1,6 @@
+@RiskTrackSCF_UserCreatorAPI_HostAddress = http://localhost:5193
+
+GET {{RiskTrackSCF_UserCreatorAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
