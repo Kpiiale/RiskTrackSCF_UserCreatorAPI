@@ -1,4 +1,4 @@
-﻿using RiskTrackSCF_UserCreatorAPI.Models.UserCreatorApi.Models;
+﻿using RiskTrackSCF_UserCreatorAPI.Models;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
