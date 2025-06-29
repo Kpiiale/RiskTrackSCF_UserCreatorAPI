@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace UserCreatorApi.Models
+namespace RiskTrackSCF_UserCreatorAPI.Models
 {
     namespace UserCreatorApi.Models
     {
