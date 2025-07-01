@@ -1,12 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RiskTrackSCF_UserCreatorAPI.DTOs;
+using RiskTrackSCF_UserCreatorAPI.Services;
 
 namespace RiskTrackSCF_UserCreatorAPI.Controllers
 {
-    public class UsersController : Controller
+    [ApiController]
+    [Route("api/users")]
+    public class UsersController : ControllerBase
     {
-        public IActionResult Index()
+        private readonly IUserService _userService;
+
+        public UsersController(IUserService userService)
         {
-            return View();
+            _userService = userService;
+        }
+
+        [HttpPost("create")]
+        public IActionResult Create([FromBody] CreateUserRequest request)
+        {
+            _userService.CreateUser(request);
+            return Ok("User created successfully");
         }
     }
 }
