@@ -3,32 +3,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RiskTrackSCF_UserCreatorAPI.Models
 {
-    [Table("Usuario")]
+    [Table("Users")]
     public class User
     {
         [Key]
-        [Column("id_usuario")]
-        public int Id { get; set; }
-        [Column("id_empresa")]
+        public int UserId { get; set; }
+
         public int? CompanyId { get; set; }
-        [Column("nombre_completo")]
-        [StringLength(100)]
-        public string? FullName { get; set; }
-        [Required]
-        [EmailAddress]
-        [Column("correo")]
-        [StringLength(100)]
-        public string Email { get; set; }
-        [Required]
-        [Column("contrasena_hash")]
-        [StringLength(255)]
-        public string PasswordHash { get; set; }
-        [Column("rol")]
-        [StringLength(20)]
-        public string Role { get; set; } = "U";
-        [Column("fecha_creacion")]
-        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
-        [Column("activo")]
-        public bool IsActive { get; set; } = true;
+
+        [MaxLength(100)]
+        public string? Username { get; set; }
+
+        [MaxLength(100)]
+        public string? Email { get; set; }
+
+        [MaxLength(100)]
+        public string? Password { get; set; }
+
+        [MaxLength(50)]
+        public string? Role { get; set; }
     }
 }
