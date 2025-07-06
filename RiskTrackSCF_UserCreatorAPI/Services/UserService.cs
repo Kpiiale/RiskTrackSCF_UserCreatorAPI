@@ -15,12 +15,12 @@ namespace RiskTrackSCF_UserCreatorAPI.Services
 
         public User? Authenticate(LoginRequest request)
         {
-            var user = _context.Usuarios.FirstOrDefault(u => u.Email == request.Email && u.Role == "A" && u.IsActive);
+            var user = _context.Users.FirstOrDefault(u => u.Email == request.Email && u.Role == "A");
 
             if (user == null)
                 return null;
 
-            bool valid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+            bool valid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
             return valid ? user : null;
         }
 
@@ -30,16 +30,14 @@ namespace RiskTrackSCF_UserCreatorAPI.Services
 
             var newUser = new User
             {
-                FullName = request.FullName,
+                Username = request.Username,
                 Email = request.Email,
-                PasswordHash = hashedPassword,
+                Password = hashedPassword,
                 Role = request.Role,
                 CompanyId = request.CompanyId,
-                CreationDate = DateTime.UtcNow,
-                IsActive = true
             };
 
-            _context.Usuarios.Add(newUser);
+            _context.Users.Add(newUser);
             _context.SaveChanges();
         }
     }
