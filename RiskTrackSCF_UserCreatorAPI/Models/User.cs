@@ -22,5 +22,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Models
 
         [MaxLength(50)]
         public string? Role { get; set; }
+
+        public Company? Company { get; set; }
     }
 }
