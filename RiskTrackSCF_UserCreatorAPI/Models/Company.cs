@@ -6,5 +6,6 @@
         public string? Name { get; set; }
         public string? RUC { get; set; }
         public string? Sector { get; set; }
+        public ICollection<User>? Users { get; set; } 
     }
 }
