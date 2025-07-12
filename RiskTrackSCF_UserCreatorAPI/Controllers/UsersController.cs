@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using RiskTrackSCF_UserCreatorAPI.Data;
 using RiskTrackSCF_UserCreatorAPI.Models;
+using RiskTrackSCF_UserCreatorAPI.DTOs;
 
 namespace RiskTrackSCF_UserCreatorAPI.Controllers
 {
@@ -38,8 +39,17 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(User user)
+        public async Task<ActionResult<User>> CreateUser(CreateUserRequest request)
         {
+            var user = new User
+            {
+                Username = request.Username,
+                Email = request.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                Role = request.Role,
+                CompanyId = request.CompanyId
+            };
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
