@@ -1,25 +1,105 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RiskTrackSCF_UserCreatorAPI.Data;
 using RiskTrackSCF_UserCreatorAPI.DTOs;
+using RiskTrackSCF_UserCreatorAPI.Models;
 using RiskTrackSCF_UserCreatorAPI.Services;
 
 namespace RiskTrackSCF_UserCreatorAPI.Controllers
 {
     [ApiController]
-    [Route("api/users")]
+    [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly ApplicationDbContext _context;
 
-        public UsersController(IUserService userService)
+
+        private readonly IEmailService _emailService;
+
+        public UsersController(ApplicationDbContext context, IEmailService emailService)
         {
-            _userService = userService;
+            _context = context;
+            _emailService = emailService;
         }
 
-        [HttpPost("create")]
-        public IActionResult Create([FromBody] CreateUserRequest request)
+
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            _userService.CreateUser(request);
-            return Ok("User created successfully");
+            return await _context.Users
+                .Include(u => u.Company)
+                .ToListAsync();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<User>> GetUser(int id)
+        {
+            var user = await _context.Users
+                .Include(u => u.Company)
+                .FirstOrDefaultAsync(u => u.UserId == id);
+
+            if (user == null)
+                return NotFound();
+
+            return user;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<User>> CreateUser(CreateUserRequest request)
+        {
+            var user = new User
+            {
+                Username = request.Username,
+                Email = request.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                Role = request.Role,
+                CompanyId = request.CompanyId
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            var subject = "¡Bienvenido a RiskTrack!";
+            var body = $"<h2>Hola {user.Username},</h2><p>Tu cuenta ha sido creada exitosamente.</p><p>Estamos felices de tenerte en nuestra plataforma. Puedes iniciar sesión en cualquier momento.</p>";
+            await _emailService.SendEmailAsync(user.Email!, subject, body);
+            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
+
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, User user)
+        {
+            if (id != user.UserId)
+                return BadRequest("User ID mismatch.");
+
+            _context.Entry(user).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Users.Any(e => e.UserId == id))
+                    return NotFound();
+
+                throw;
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return NotFound();
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

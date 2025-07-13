@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace RiskTrackSCF_UserCreatorAPI.Models
 {
@@ -22,5 +23,8 @@ namespace RiskTrackSCF_UserCreatorAPI.Models
 
         [MaxLength(50)]
         public string? Role { get; set; }
+        [JsonIgnore] 
+
+        public Company? Company { get; set; }
     }
 }

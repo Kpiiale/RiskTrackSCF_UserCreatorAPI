@@ -25,7 +25,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
             return Ok(new
             {
                 message = "Login successful",
-                user = new { user.UserId, user.Username, user.Email }
+                user = new { user.UserId, user.Username, user.Email, user.Role}
             });
         }
     }
