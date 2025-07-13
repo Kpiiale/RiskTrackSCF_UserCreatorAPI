@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RiskTrackSCF_UserCreatorAPI.Data;
-using RiskTrackSCF_UserCreatorAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using RiskTrackSCF_UserCreatorAPI.Data;
+using RiskTrackSCF_UserCreatorAPI.DTOs;
+using RiskTrackSCF_UserCreatorAPI.Models;
 
 namespace RiskTrackSCF_UserCreatorAPI.Controllers
 {
@@ -31,11 +32,19 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Company>> CreateCompany(Company company)
+        public async Task<ActionResult<Company>> CreateCompany(CreateCompanyRequest request)
         {
+            var company = new Company
+            {
+                Name = request.Name,
+                RUC = request.RUC,
+                Sector = request.Sector,
+            };
+
             _context.Companies.Add(company);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetCompany), new { id = company.CompanyId }, company);
+
         }
 
         [HttpPut("{id}")]
