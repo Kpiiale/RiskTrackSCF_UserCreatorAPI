@@ -15,7 +15,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Services
 
         public User? Authenticate(LoginRequest request)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Email == request.Email && u.Role == "A");
+            var user = _context.Users.FirstOrDefault(u => u.Email == request.Email && u.Role == "S");
 
             if (user == null)
                 return null;
