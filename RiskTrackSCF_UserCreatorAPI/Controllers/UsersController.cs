@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RiskTrackSCF_UserCreatorAPI.Data;
-using RiskTrackSCF_UserCreatorAPI.Models;
 using RiskTrackSCF_UserCreatorAPI.DTOs;
+using RiskTrackSCF_UserCreatorAPI.Models;
+using RiskTrackSCF_UserCreatorAPI.Services;
 
 namespace RiskTrackSCF_UserCreatorAPI.Controllers
 {
@@ -12,10 +13,16 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public UsersController(ApplicationDbContext context)
+
+        private readonly IEmailService _emailService;
+
+        public UsersController(ApplicationDbContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
+
+
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
@@ -52,8 +59,11 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-
+            var subject = "¡Bienvenido a RiskTrack!";
+            var body = $"<h2>Hola {user.Username},</h2><p>Tu cuenta ha sido creada exitosamente.</p><p>Estamos felices de tenerte en nuestra plataforma. Puedes iniciar sesión en cualquier momento.</p>";
+            await _emailService.SendEmailAsync(user.Email!, subject, body);
             return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
+
         }
 
         [HttpPut("{id}")]
