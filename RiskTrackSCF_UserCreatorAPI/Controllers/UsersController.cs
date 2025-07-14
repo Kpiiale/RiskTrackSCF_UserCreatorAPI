@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using RiskTrackSCF_UserCreatorAPI.Data;
 using RiskTrackSCF_UserCreatorAPI.DTOs;
 using RiskTrackSCF_UserCreatorAPI.Models;
-using RiskTrackSCF_UserCreatorAPI.Services;
+using RiskTrackSCF_UserCreatorAPI.Contracts;
 
 namespace RiskTrackSCF_UserCreatorAPI.Controllers
 {
