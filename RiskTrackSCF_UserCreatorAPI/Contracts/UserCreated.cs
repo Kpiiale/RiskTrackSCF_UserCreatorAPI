@@ -1,4 +1,4 @@
-﻿namespace RiskTrackSCF_UserCreatorAPI.Models
+﻿namespace RiskTrackSCF_UserCreatorAPI.Contracts
 {
     public record UserCreated
     {

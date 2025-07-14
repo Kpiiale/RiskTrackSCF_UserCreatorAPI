@@ -1,5 +1,6 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using RiskTrackSCF_UserCreatorAPI.Consumers;
 using RiskTrackSCF_UserCreatorAPI.Data;
 using RiskTrackSCF_UserCreatorAPI.Services;
 

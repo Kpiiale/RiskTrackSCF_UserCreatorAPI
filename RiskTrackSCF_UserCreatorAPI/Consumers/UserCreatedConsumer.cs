@@ -1,7 +1,8 @@
 ﻿using MassTransit;
-using RiskTrackSCF_UserCreatorAPI.Models;
+using RiskTrackSCF_UserCreatorAPI.Contracts;
+using RiskTrackSCF_UserCreatorAPI.Services;
 
-namespace RiskTrackSCF_UserCreatorAPI.Services
+namespace RiskTrackSCF_UserCreatorAPI.Consumers
 {
     public class UserCreatedConsumer : IConsumer<UserCreated>
     {
