@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RiskTrackSCF_UserCreatorAPI.Data;
 using RiskTrackSCF_UserCreatorAPI.DTOs;
@@ -14,14 +15,13 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
         private readonly ApplicationDbContext _context;
 
 
-        private readonly IEmailService _emailService;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public UsersController(ApplicationDbContext context, IEmailService emailService)
+        public UsersController(ApplicationDbContext context, IPublishEndpoint publishEndpoint)
         {
             _context = context;
-            _emailService = emailService;
+            _publishEndpoint = publishEndpoint;
         }
-
 
 
         [HttpGet]
@@ -59,11 +59,14 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            var subject = "¡Bienvenido a RiskTrack!";
-            var body = $"<h2>Hola {user.Username},</h2><p>Tu cuenta ha sido creada exitosamente.</p><p>Estamos felices de tenerte en nuestra plataforma. Puedes iniciar sesión en cualquier momento.</p>";
-            await _emailService.SendEmailAsync(user.Email!, subject, body);
-            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
 
+            await _publishEndpoint.Publish(new UserCreated
+            {
+                Username = user.Username!,
+                Email = user.Email!
+            });
+
+            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
         }
 
         [HttpPut("{id}")]

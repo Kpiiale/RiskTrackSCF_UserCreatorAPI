@@ -1,6 +1,7 @@
+using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using RiskTrackSCF_UserCreatorAPI.Data;
 using RiskTrackSCF_UserCreatorAPI.Services;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,11 +16,29 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // Add controllers
 builder.Services.AddControllers();
 
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<UserCreatedConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        var rabbitMqConfig = builder.Configuration.GetSection("RabbitMQ");
+        cfg.Host(rabbitMqConfig["HostName"], "/", h =>
+        {
+            h.Username(rabbitMqConfig["UserName"]);
+            h.Password(rabbitMqConfig["Password"]);
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
+
 // ?? Add Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 var app = builder.Build();
+
+
 
 // ?? Enable Swagger middleware
 if (app.Environment.IsDevelopment())
