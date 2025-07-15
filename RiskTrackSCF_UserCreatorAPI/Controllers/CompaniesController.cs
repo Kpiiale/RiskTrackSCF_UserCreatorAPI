@@ -10,6 +10,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
     [Route("api/[controller]")]
     public class CompaniesController : ControllerBase
     {
+        // Inyección de dependencia del contexto de la base de datos.
         private readonly ApplicationDbContext _context;
 
         public CompaniesController(ApplicationDbContext context)
@@ -26,6 +27,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Company>> GetCompany(int id)
         {
+            // Busca la compañía por su clave primaria.
             var company = await _context.Companies.FindAsync(id);
             if (company == null) return NotFound();
             return company;
@@ -34,6 +36,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Company>> CreateCompany(CreateCompanyRequest request)
         {
+            // Mapea el DTO (Data Transfer Object) a la entidad del modelo.
             var company = new Company
             {
                 Name = request.Name,
@@ -50,6 +53,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCompany(int id, Company company)
         {
+            // Valida que el ID de la ruta coincida con el ID del objeto.
             if (id != company.CompanyId) return BadRequest();
 
             _context.Entry(company).State = EntityState.Modified;
@@ -59,6 +63,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
+                // Maneja el caso en que el registro fue eliminado por otro usuario mientras se intentaba actualizar.
                 if (!_context.Companies.Any(e => e.CompanyId == id)) return NotFound();
                 throw;
             }

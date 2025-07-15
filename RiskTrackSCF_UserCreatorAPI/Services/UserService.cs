@@ -6,6 +6,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Services
 {
     public class UserService : IUserService
     {
+        // Implementación de la lógica de negocio para la gestión de usuarios.
         private readonly ApplicationDbContext _context;
 
         public UserService(ApplicationDbContext context)
@@ -19,7 +20,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Services
 
             if (user == null)
                 return null;
-
+            // Verifica que la contraseña proporcionada coincida con el hash almacenado en la base de datos.
             bool valid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
             return valid ? user : null;
         }
@@ -27,7 +28,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Services
         public void CreateUser(CreateUserRequest request)
         {
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
+            // Crea una nueva entidad de usuario con los datos proporcionados.
             var newUser = new User
             {
                 Username = request.Username,

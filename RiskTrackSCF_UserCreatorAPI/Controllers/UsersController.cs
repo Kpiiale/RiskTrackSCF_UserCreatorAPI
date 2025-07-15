@@ -12,6 +12,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
+        // Inyección de dependencias.
         private readonly ApplicationDbContext _context;
 
 
@@ -27,6 +28,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
+            // Carga los usuarios y sus datos de compañía asociados (eager loading).
             return await _context.Users
                 .Include(u => u.Company)
                 .ToListAsync();
@@ -35,6 +37,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
+            // Busca un usuario por su ID, incluyendo la información de su compañía.
             var user = await _context.Users
                 .Include(u => u.Company)
                 .FirstOrDefaultAsync(u => u.UserId == id);
@@ -52,6 +55,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
             {
                 Username = request.Username,
                 Email = request.Email,
+                //Almacena la contraseña hasheada, nunca en texto plano.
                 Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 Role = request.Role,
                 CompanyId = request.CompanyId
@@ -60,6 +64,7 @@ namespace RiskTrackSCF_UserCreatorAPI.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            // Publica un evento 'UserCreated' en el bus de mensajes.
             await _publishEndpoint.Publish(new UserCreated
             {
                 Username = user.Username!,
